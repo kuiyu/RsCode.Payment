@@ -17,6 +17,7 @@ using RsCode.Payment.Tenpay.Media;
 using RsCode.Payment.Tenpay.V3;
 using RsCode.Payment.Tenpay.V2;
 using RsCode.Payment.Tenpay;
+using Microsoft.Extensions.Options;
 
 namespace RsCode.Payment
 {
@@ -40,10 +41,16 @@ namespace RsCode.Payment
                 .AddJsonFile("pay.json", optional: true, reloadOnChange: true);
             var config = configBuilder.Build();
          
-            services.Configure<List<PayOptions>>(options => config.GetSection("Payment").Bind(options));
-            services.Configure<List<AppOptions>>(options => config.GetSection("App").Bind(options));
-            services.Configure<List<AuthKeyOptions>>(options => config.GetSection("AuthKey").Bind(options));
+            var option=services.BuildServiceProvider().GetRequiredService<IOptionsSnapshot<List<PayOptions>>>();
+             if(option.Value.Count==0)
+            {
+                services.Configure<List<PayOptions>>(options => config.GetSection("Payment").Bind(options));
+                services.Configure<List<AppOptions>>(options => config.GetSection("App").Bind(options));
+                services.Configure<List<AuthKeyOptions>>(options => config.GetSection("AuthKey").Bind(options));
+            }
+           
             
+             
 
             services.TryAddScoped<IPayConfig, PayConfig>();
            

@@ -24,13 +24,17 @@ namespace RsCode.Payment.Tenpay.V3
         /// </summary>
         [JsonPropertyName("create_time")] public string CreateTime { get; set; }
         /// <summary>
-        /// 通知的类型，
+        /// 通知的类型:
+        /// 支付成功通知的类型为TRANSACTION.SUCCESS
         ///授权成功通知的类型为 PAYSCORE.USER_OPEN_SERVICE
         ///解除授权成功通知的类型为 PAYSCORE.USER_CLOSE_SERVICE
         ///用户确认成功通知的类型为 PAYSCORE.USER_CONFIRM
-        ///支付成功通知的类型为 PAYSCORE.USER_PAID
+        ///REFUND.SUCCESS：退款成功通知
+        ///REFUND.ABNORMAL：退款异常通知
+        ///REFUND.CLOSED：退款关闭通知
         /// </summary>
-        [JsonPropertyName("event_type")] public string EventType { get; set; }
+        [JsonPropertyName("event_type")] 
+        public string EventType { get; set; }
 
         /// <summary>
         /// 通知的资源数据类型，授权/解除授权成功通知为encryptresource 

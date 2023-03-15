@@ -10,13 +10,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RsCode.Payment.Tenpay.V3;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -130,6 +129,30 @@ namespace RsCode.Payment.Tenpay.V2
             }
         }
 
+     
+
+        public async Task<NotifyDataV3>GetNotifyDataAsync(HttpRequest request)
+        {
+            var body = await new StreamReader(request.Body, Encoding.UTF8).ReadToEndAsync();
+            logger.LogInformation($"notify body={body}");
+            var data = new WxPayData();
+            data.FromXml(body);
+
+            if (data.GetValue("return_code").ToString() == "SUCCESS")
+            {
+                var s = data.ToJson();
+                var result = JsonSerializer.Deserialize<NotifyDataV3>(s);
+                if (CheckSign(result))
+                {
+                    return result;
+                }
+                throw new Exception("验签失败");
+            }
+            else
+            {
+                throw new Exception(data.GetValue("return_msg").ToString());
+            }
+        }
         public bool CheckSign(NotifyData data)
         {
             if (currentPayOptions == null)
@@ -164,6 +187,11 @@ namespace RsCode.Payment.Tenpay.V2
             //    cache.Set<byte[]>(cacheKey, publicKey, DateTimeOffset.Now.AddHours(11));
             //}
             //return publicKey;
+        }
+
+        public Task<T> GetNotifyDataAsync<T>(NotifyDataV3 notifyData) where T : NotifyData
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -89,17 +89,24 @@ namespace RsCode.Payment.Tenpay.V3
             return default(T);
         }
 
-        public async Task<T> GetNotifyDataAsync<T>(HttpRequest request) where T : NotifyData
+        public async Task<T> GetNotifyDataAsync<T>(NotifyDataV3 notifyData) where T : NotifyData
+        {
+            //解密数据 
+            var res = notifyData.GetResult(payOptions.APIKeyV3);
+            return JsonSerializer.Deserialize<T>(res);
+        }
+
+        public async Task<NotifyDataV3> GetNotifyDataAsync(HttpRequest request) 
         {
             try
-            { 
+            {
                 //https://wechatpay-api.gitbook.io/wechatpay-api-v3/qian-ming-zhi-nan-1/qian-ming-yan-zheng
                 //1.获取平台证书
                 var publicKey = await GetPublicKeyAsync();
 
                 //2.构造验签名串 
                 StringValues timestamp = "";
-                StringValues nonce = ""; 
+                StringValues nonce = "";
                 request.Headers.TryGetValue("Wechatpay-Timestamp", out timestamp);
                 request.Headers.TryGetValue("Wechatpay-Nonce", out nonce);
                 //接收从微信后台POST过来的数据
@@ -111,13 +118,12 @@ namespace RsCode.Payment.Tenpay.V3
                 request.Headers.TryGetValue("Wechatpay-Signature", out wxpaySign);
 
                 //4.验证签名
-                var checkSign =TenpayTool.VerifySign(publicKey, wxpaySign.ToString(), signSourceString);
+                var checkSign = TenpayTool.VerifySign(publicKey, wxpaySign.ToString(), signSourceString);
                 if (checkSign)
                 {
                     var notifyData = JsonSerializer.Deserialize<NotifyDataV3>(body);
-                    //解密数据 
-                    var res = notifyData.GetResult(payOptions.APIKeyV3);
-                    return JsonSerializer.Deserialize<T>(res); 
+
+                    return notifyData;
                 }
                 else
                 {
@@ -131,7 +137,6 @@ namespace RsCode.Payment.Tenpay.V3
             }
         }
 
-       
         /// <summary>
         /// 微信平台证书公钥
         /// </summary>

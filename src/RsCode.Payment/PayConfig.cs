@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using RsCode.Config;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +16,7 @@ namespace RsCode.Payment
     public class PayConfig : IPayConfig
     {
          
-        public PayConfig(AppConfig _appConfig,
+        public PayConfig(
             IOptionsSnapshot<List<PayOptions>> _payOptions, 
             IOptionsSnapshot<List<AppOptions>> _appOptions, 
             IOptionsSnapshot<List<AuthKeyOptions>> _authkeyOptions)
@@ -25,9 +24,8 @@ namespace RsCode.Payment
             payOptions = _payOptions?.Value;
             appOptions = _appOptions?.Value;
             authkeyOptions = _authkeyOptions?.Value;
-            appConfig = _appConfig;
         }
-        AppConfig appConfig;
+        
         List<PayOptions> payOptions;
         List<AppOptions> appOptions;
         List<AuthKeyOptions> authkeyOptions;
@@ -43,12 +41,14 @@ namespace RsCode.Payment
         {
             return payOptions;
         }
+
+      
         /// <summary>
         /// 获取指定应用的配置信息
         /// </summary>
         /// <param name="clientId"></param>
         /// <returns></returns>
-        public virtual List<AppOptions>GetAppInfo(string clientId)
+        public virtual List<AppOptions>GetAppInfos(string clientId)
         {
             return appOptions?.FindAll(c=>c.ClientId==clientId);
         }
@@ -86,7 +86,7 @@ namespace RsCode.Payment
                 }
                 authkeys.Add(option);
 
-                dynamic obj = AppSettings.GetJObject("pay.json");
+                dynamic obj = GetJObject("pay.json");
                 obj.AuthKey = JArray.FromObject(authkeys);
                 //AppSettings.Save(obj);
 
@@ -97,37 +97,39 @@ namespace RsCode.Payment
                 throw new Exception(ex.Message);
             }
         }
-        public virtual void SavePayment(PayOptions payOptions,string oldMchId)
+        public virtual void SavePayment(PayOptions options,string oldMchId)
         {
             try
             {
                 //pay.json Payment 所有内容 
-                var clients = AppSettings.GetSection<List<PayOptions>>("Payment", "pay.json");
+                
+                var clients = payOptions ;
                 if (clients == null)
                 {
                     clients = new List<PayOptions>();
                 }
                 if(string.IsNullOrWhiteSpace(oldMchId))
                 {
-                    clients.Add(payOptions);
+                    clients.Add(options);
                 }else
                 {
                     var payClient = clients?.FirstOrDefault(c => c.MchId == oldMchId);
                     if (payClient != null)
                     {
                         int index = clients.IndexOf(payClient);
-                        clients[index] = payOptions;
+                        clients[index] = options;
                     }
                     else
                     {
-                        clients.Add(payOptions);
+                        clients.Add(options);
                     }
                 }
                 
 
-                dynamic obj = AppSettings.GetJObject("pay.json");
+                dynamic obj = GetJObject("pay.json");
                 obj.Payment = JArray.FromObject(clients);
-                AppSettings.Save(obj);
+                //AppSettings.Save(obj);
+                SaveJson(obj);
             }
             catch (Exception ex)
             {
@@ -136,31 +138,44 @@ namespace RsCode.Payment
 
         }
 
-        public virtual void SaveAppClient(AppOptions appOptions)
+        public void RemovePaymentInfo(string mchId)
+        {
+            var option = GetPaymentInfo(mchId);
+            if(option!=null)
+            {
+                payOptions.Remove(option);
+
+                dynamic obj = GetJObject("pay.json");
+                obj.Payment = JArray.FromObject(payOptions);
+                SaveJson(obj);
+            }
+        }
+        public virtual void SaveAppClient(AppOptions options)
         {
             try
             {
-                var apps = AppSettings.GetSection<List<AppOptions>>("App", "pay.json");
+               
+                var apps = appOptions;
                 if (apps == null)
                 {
                     apps = new List<AppOptions>();
                 }
 
-                var app = apps.FirstOrDefault(a => a.AppId == appOptions.AppId&&a.ClientId==appOptions.ClientId);
+                var app = apps.FirstOrDefault(a => a.AppId == options.AppId);
                 if (app != null)
                 {
                     int index = apps.IndexOf(app);
-                    apps[index] = appOptions;
+                    apps[index] = options;
                 }
                 else
                 {
-                    apps.Add(appOptions);
+                    apps.Add(options);
                 }
 
 
-                dynamic obj = AppSettings.GetJObject("pay.json");
+                dynamic obj = GetJObject("pay.json");
                 obj.App = JArray.FromObject(apps);
-                AppSettings.Save(obj);
+                SaveJson(obj);
             }
             catch (Exception ex)
             { 
@@ -204,7 +219,7 @@ namespace RsCode.Payment
         {
             List<ClientOptions> target = null;
             //获取支付客户端
-            var payClients = AppSettings.GetSection<PayOptions[]>("Payment", "pay.json");// payOptions;
+            var payClients = payOptions;
             if (payClients != null)
             {
                 target = new List<ClientOptions>();
@@ -214,7 +229,7 @@ namespace RsCode.Payment
                     ClientOptions clientOptions = new ClientOptions();
                     clientOptions.PayOptions = payClient;
                     clientOptions.AuthKeyOptions = authkeyOptions;
-                    var appClients = AppSettings.GetSection<AppOptions[]>("App", "pay.json");// appOptions;
+                    var appClients = appOptions;
                     if (appClients != null)
                     {
                         var appClient = appClients.FirstOrDefault(app => app.MchId == payClient.MchId);
@@ -231,77 +246,55 @@ namespace RsCode.Payment
             return target;
         }
 
-        public virtual List<AppOptions>GetAppClient(string mchId)
-        { 
-            //获取appClient
-            var appClients = AppSettings.GetSection<AppOptions[]>("App", "pay.json");
-            if(appClients!=null)
-            {
-               return appClients.Where(a => a.MchId == mchId)?.ToList();
-            }
-            return null;
-        }
+      
 
-        public PayOptions GetPayOption(string mchId)
+        public PayOptions GetPaymentInfo(string mchId)
         {
             var clients = GetClient();
             var client= clients?.FirstOrDefault(c => c.PayOptions.MchId == mchId);
             return  client?.PayOptions;
         }
 
-        public virtual void RemoveAppClient(string clientId)
+        public virtual void RemoveAppInfo(string appId)
         {
-            var appClients = AppSettings.GetSection<AppOptions[]>("App", "pay.json");
-            if (appClients != null)
+            if (appOptions != null)
             {
-                appClients.ToList().RemoveAll(x => x.ClientId == clientId);
-                dynamic obj = AppSettings.GetJObject("pay.json");
-                obj.App = JArray.FromObject(appClients);
-                AppSettings.Save(obj);
+                var option = appOptions.FirstOrDefault(x => x.AppId == appId);
+                appOptions.Remove(option);
+               
+                dynamic obj = GetJObject("pay.json");
+                obj.App = JArray.FromObject(appOptions);
+                SaveJson(obj);
             } 
         }
 
         public virtual void RemoveAppClient(string clientId,PaymentScene paymentScene,string mchId)
         {
-            var appClients = AppSettings.GetSection<AppOptions[]>("App", "pay.json");
+            var appClients = appOptions;
             if (appClients != null)
             {
                 appClients.ToList().RemoveAll(x => x.ClientId == clientId&&x.PaymentScene== paymentScene&&x.MchId==mchId);
-                dynamic obj = AppSettings.GetJObject("pay.json");
+                dynamic obj = GetJObject("pay.json");
                 obj.App = JArray.FromObject(appClients);
-                AppSettings.Save(obj);
+                //AppSettings.Save(obj);
+                SaveJson(obj);
             }
         }
 
         public virtual void ChangeAdminPassword(string newPassword)
         {
-            dynamic obj = AppSettings.GetJObject("pay.json");
+            dynamic obj = GetJObject("pay.json");
             obj.Admin.Password = newPassword;
-            AppSettings.Save(obj);
+            SaveJson(obj);
         }
 
-        
-
-        public virtual async Task<List<AuthKeyOptions>> GetAuthKeyAsync()
-        {
-            List<AuthKeyOptions> authkeys = null;
-            await Task.Run(() =>
-            {
-                // authkeys = AppSettings.GetSection<List<AuthKeyOptions>>("AuthKey", "pay.json");                
-
-                authkeys =appConfig.GetSection<List<AuthKeyOptions>>("AuthKey", "pay.json");
-            });
-
-
-           return authkeys;
-        }
       
-
+      
         public virtual async Task RemoveAuthKey(string authkeyId)
         {
             try
             {
-                var authkeys =await GetAuthKeyAsync();
+                var authkeys = authkeyOptions;
                 if (authkeys != null)
                 {
                     var authkey = authkeys.FirstOrDefault<AuthKeyOptions>(a => a.id == authkeyId);
@@ -311,7 +304,7 @@ namespace RsCode.Payment
                         authkeys = new List<AuthKeyOptions>();
                 }
 
-                dynamic obj = AppSettings.GetJObject("pay.json");
+                dynamic obj = GetJObject("pay.json");
                 obj.AuthKey = JArray.FromObject(authkeys);
                 //AppSettings.Save(obj);
 
@@ -333,7 +326,21 @@ namespace RsCode.Payment
                 WriteJsonFile(jsonFileFullPath, jsonConents);
             });
         }
-
+        void SaveJson(dynamic obj)
+        {
+            var jsonConents = JsonConvert.SerializeObject(obj, Formatting.Indented);
+            var root = AppContext.BaseDirectory;
+            string jsonFileFullPath = Path.Combine(root, "pay.json");
+            WriteJsonFile(jsonFileFullPath, jsonConents);
+        }
+        public  JObject GetJObject(string jsonFilePath = "appsettings.json")
+        {
+            using (StreamReader reader = new StreamReader(jsonFilePath))
+            {
+                using JsonTextReader reader2 = new JsonTextReader(reader);
+                return JToken.ReadFrom(reader2) as JObject;
+            } 
+        }
         void WriteJsonFile(string path, string jsonConents)
         {            
 
@@ -346,9 +353,9 @@ namespace RsCode.Payment
             }
         }
 
-        public bool UseDataBase()
+        public Task<List<AuthKeyOptions>> GetAuthKeyAsync()
         {
-           return  appConfig.GetValue<bool>("UseDataBase", "pay.json");
+            throw new NotImplementedException();
         }
     }
 }

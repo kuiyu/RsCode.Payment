@@ -8,8 +8,13 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
     /// <summary>
     /// 订单金额信息
     /// </summary>
-    public class OrderAmountInfo
+    public class AmountInfo
     {
+        public AmountInfo()
+        {
+
+        }
+   
         /// <summary>
         /// 订单总金额，单位为分。
         /// </summary>
@@ -19,12 +24,7 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
         /// CNY：人民币，境内商户号仅支持人民币
         /// </summary>
         [JsonPropertyName("currency")]
-        public string Currency { get; set; }
-
-
-
-
-
+        public string Currency { get; set; } = "CNY";
 
 
         /// <summary>

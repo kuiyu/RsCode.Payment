@@ -21,11 +21,28 @@ namespace RsCode.Payment
         /// <returns></returns>
         List<PayOptions> GetPaymentInfo();
         /// <summary>
+        /// 移除支付参数
+        /// </summary>
+        /// <param name="mchId"></param>
+        void RemovePaymentInfo(string mchId);
+        /// <summary>
+        /// 保存支付配置
+        /// </summary>
+        /// <param name="payOptions"></param>
+        /// <param name="oldMchId">原商户号</param>
+        void SavePayment(PayOptions payOptions, string oldMchId);
+        /// <summary>
+        /// 查询商户的支付信息
+        /// </summary>
+        /// <param name="mchId"></param>
+        /// <returns></returns>
+        PayOptions GetPaymentInfo(string mchId);
+        /// <summary>
         /// 获取指定应用的配置信息
         /// </summary>
         /// <param name="clientId"></param>
         /// <returns></returns>
-        List<AppOptions> GetAppInfo(string clientId);
+        List<AppOptions> GetAppInfos(string clientId);
         /// <summary>
         /// 获取authkey
         /// </summary>
@@ -44,25 +61,10 @@ namespace RsCode.Payment
         /// <returns></returns>
         List<ClientOptions> GetClient();
 
-        /// <summary>
-        /// 查询商户的支付信息
-        /// </summary>
-        /// <param name="mchId"></param>
-        /// <returns></returns>
-        PayOptions GetPayOption(string mchId);
+ 
 
-        /// <summary>
-        /// 保存支付配置
-        /// </summary>
-        /// <param name="payOptions"></param>
-        /// <param name="oldMchId">原商户号</param>
-        void SavePayment(PayOptions payOptions,string oldMchId);
-        /// <summary>
-        /// 获取使用指定商户号的应用
-        /// </summary>
-        /// <param name="mchId"></param>
-        /// <returns></returns>
-        List<AppOptions> GetAppClient(string mchId);
+
+       
         /// <summary>
         /// 保存APP设置
         /// </summary>
@@ -72,7 +74,7 @@ namespace RsCode.Payment
         /// 移除指定clientId配置信息
         /// </summary>
         /// <param name="clientId"></param>
-        void RemoveAppClient(string clientId);
+        void RemoveAppInfo(string clientId);
         /// <summary>
         /// 移除指定clientId指定商户号配置信息
         /// </summary>
@@ -97,11 +99,7 @@ namespace RsCode.Payment
         /// <param name="authkeyId">authkey id</param>
         Task RemoveAuthKey(string authkeyId);
 
-        /// <summary>
-        /// 是否使用数据库存储
-        /// </summary>
-        /// <returns></returns>
-        bool UseDataBase();
+
 
         /// <summary>
         /// 更换原管理员密码

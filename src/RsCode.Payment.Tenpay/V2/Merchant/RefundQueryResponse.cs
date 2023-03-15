@@ -5,9 +5,7 @@
  * 项目己托管于  
  * github https://github.com/kuiyu/RsCode.Payment.git
  */
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using System.Xml.Serialization;
 
 namespace RsCode.Payment.Tenpay.V2.Merchant
 {

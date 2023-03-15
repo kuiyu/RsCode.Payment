@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Http;
 using RsCode.Payment;
 using RsCode.Payment.Alipay;
+using Microsoft.Extensions.Options;
 
 namespace RsCode.Payment
 {
@@ -32,10 +33,13 @@ namespace RsCode.Payment
                 .SetBasePath(Directory.GetCurrentDirectory())
                .AddJsonFile("pay.json", true, true);
             var config = configBuilder.Build();
-            services.Configure<List<PayOptions>>(options => config.GetSection("Payment").Bind(options));
-            services.Configure<List<AppOptions>>(options => config.GetSection("App").Bind(options));
-            services.Configure<List<AuthKeyOptions>>(options => config.GetSection("AuthKey").Bind(options));
-
+            var option = services.BuildServiceProvider().GetRequiredService<IOptionsSnapshot<List<PayOptions>>>();
+            if (option.Value.Count == 0)
+            {
+                services.Configure<List<PayOptions>>(options => config.GetSection("Payment").Bind(options));
+                services.Configure<List<AppOptions>>(options => config.GetSection("App").Bind(options));
+                services.Configure<List<AuthKeyOptions>>(options => config.GetSection("AuthKey").Bind(options));
+            }
 services.TryAddSingleton<List<PayOptions>>();
             services.TryAddSingleton<List<AppOptions>>();
             services.TryAddSingleton<List<AuthKeyOptions>>();

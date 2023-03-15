@@ -61,7 +61,7 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
         ///  订单金额信息
         /// </summary>
         [JsonPropertyName("amount")]
-        public OrderAmountInfo OrderAmountInfo { get; set; }
+        public AmountInfo OrderAmountInfo { get; set; }
         /// <summary>
         ///  支付者信息
         /// </summary>

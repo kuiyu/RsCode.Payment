@@ -32,9 +32,7 @@ namespace RsCode.Payment.Tenpay.V3
         {
             int code = 200;
             string responseContent = "";
-            try
-            {
-                
+            
                 using (var response = await Client.GetAsync(url))
                 {
                      code = Convert.ToInt32(response.StatusCode);
@@ -50,17 +48,10 @@ namespace RsCode.Payment.Tenpay.V3
                     {
                         var s = await response.Content.ReadAsStringAsync();
                         responseContent = s; 
-                        throw new Exception(s);
+                        return JsonSerializer.Deserialize<T>(responseContent);
                     }
 
                 }
-            }
-            catch (Exception e)
-            {
-                log.LogError($"responseContent={responseContent} err={e.Message}"); 
-                throw e;
-            }
-            
 
         }
 
@@ -77,8 +68,7 @@ namespace RsCode.Payment.Tenpay.V3
         {
             int code = 200;
             string responseContent = "";
-            try
-            {
+           
                 using (httpContent)
                 using (var response = await Client.PostAsync(url, httpContent))
                 {
@@ -95,15 +85,10 @@ namespace RsCode.Payment.Tenpay.V3
                     { 
                         var s = await response.Content.ReadAsStringAsync();
                         responseContent = s;
-                        throw new Exception(s);
+                        return  JsonSerializer.Deserialize<T>(s);
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                log.LogError($"responseContent={responseContent} err={e.Message}");
-                throw e;
-            }
+            
             
  
         }

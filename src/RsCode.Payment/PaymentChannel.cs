@@ -7,6 +7,7 @@ namespace RsCode.Payment
     /// </summary>
     public enum PaymentChannel
     {
+        [Description("未知")]Unknow=0,
         /// <summary>
         /// 微信支付
         /// </summary>

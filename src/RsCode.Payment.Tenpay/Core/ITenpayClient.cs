@@ -6,6 +6,7 @@
  * github https://github.com/kuiyu/RsCode.Payment.git
  */
 using Microsoft.AspNetCore.Http;
+using RsCode.Payment.Tenpay.V3;
 using System.Threading.Tasks;
 
 namespace RsCode.Payment.Tenpay
@@ -32,9 +33,15 @@ namespace RsCode.Payment.Tenpay
         /// 获取回调数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="request">返回解密后的数据</param>
+        /// <param name="notifyData">微信回调通知数据</param>
+        /// <returns>返回对应业务明文结果</returns>
+        Task<T> GetNotifyDataAsync<T>(NotifyDataV3 notifyData) where T : NotifyData;
+        /// <summary>
+        /// 返回回调数据
+        /// </summary>
+        /// <param name="request"></param>
         /// <returns></returns>
-        Task<T> GetNotifyDataAsync<T>(HttpRequest request) where T : NotifyData;
+        Task<NotifyDataV3> GetNotifyDataAsync(HttpRequest request);
 
         string GetIp();
         /// <summary>

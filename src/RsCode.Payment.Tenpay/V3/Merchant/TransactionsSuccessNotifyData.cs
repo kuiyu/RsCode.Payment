@@ -9,6 +9,10 @@ using System.Text.Json.Serialization;
 
 namespace RsCode.Payment.Tenpay.V3.Merchant
 {
+    /// <summary>
+    /// 支付通知（明文）
+    /// <see cref="https://pay.weixin.qq.com/wiki/doc/apiv3/apis/chapter3_2_5.shtml"/>
+    /// </summary>
     public class TransactionsSuccessNotifyData:NotifyData
     {
         #region 参数
@@ -61,7 +65,7 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
         /// <summary>
         /// 订单金额
         /// </summary>
-        [JsonPropertyName("amount")] public OrderAmountInfo AmountInfo { get; set; }
+        [JsonPropertyName("amount")] public AmountInfo AmountInfo { get; set; }
         /// <summary>
         /// 场景信息
         /// </summary>

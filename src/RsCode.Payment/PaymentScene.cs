@@ -15,6 +15,10 @@ namespace RsCode.Payment
         [Description("App")]
         APP = 2,
         [Description("原生支付")]
-        Native = 3
+        Native = 3,
+        [Description("电脑网页支付")]
+        PagePay=4,
+        [Description("手机网页支付")]
+        WapPay=5
     }
 }

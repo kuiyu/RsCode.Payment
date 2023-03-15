@@ -30,7 +30,14 @@ namespace RsCode.Payment
         [JsonPropertyName("PaymentScene")]
         public PaymentScene PaymentScene { get; set; }
 
-       
+        /// <summary>
+        /// 支付渠道
+        /// </summary>
+        [JsonProperty("PaymentChannel")]
+        [JsonPropertyName("PaymentChannel")]
+        public PaymentChannel PaymentChannel { get; set; }
+
+
         /// <summary>
         /// 分配的商户号
         /// </summary> 
@@ -38,10 +45,11 @@ namespace RsCode.Payment
         [JsonPropertyName("MchId")] 
         public string MchId { get; set; }
 
-        
+        [JsonProperty("Description")]
+        [JsonPropertyName("Description")]
+        public string Description { get; set; }
 
-      
 
-       
+
     }
 }
