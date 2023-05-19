@@ -61,12 +61,8 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
         ///  订单金额信息
         /// </summary>
         [JsonPropertyName("amount")]
-        public AmountInfo OrderAmountInfo { get; set; }
-        /// <summary>
-        ///  支付者信息
-        /// </summary>
-        [JsonPropertyName("payer")]
-        public PayerInfo PayerInfo { get; set; }
+        public PrepaidAmountInfo OrderAmountInfo { get; set; }
+
         /// <summary>
         ///  优惠功能
         /// </summary>
@@ -78,6 +74,11 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
         /// </summary>
         [JsonPropertyName("scene_info")]
         public SceneInfo SceneInfo { get; set; }
+
+        [JsonPropertyName("settle_info")]
+        public SettleInfo SettleInfo { get; set; }
         #endregion
     }
+
+
 }

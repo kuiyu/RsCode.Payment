@@ -1,8 +1,10 @@
 ## 简介
 
-软商网络第三方支付SDK
+RsCode.Payment软商网络开发的第三方支付平台SDK，使用.net技术开发，帮助应用快速接入支付系统
 
-使用asp.net core技术开发
+支持多个商户号同时支付
+
+[![Gitee Stars](https://gitee.com/kuiyu/RsCode.Payment/badge/star.svg?title=Stars)](https://gitee.com/kuiyu/RsCode.Payment)[![Gitee Forks](https://gitee.com/kuiyu/RsCode.Payment/badge/fork.svg?title=Forks)](https://gitee.com/kuiyu/RsCode.Payment)[![GitHub Stars](https://img.shields.io/github/stars/kuiyu/RsCode.Payment?logo=github&label=Stars)](https://github.com/kuiyu/RsCode.Payment)[![GitHub Forks](https://img.shields.io/github/forks/kuiyu/RsCode.Payment?logo=github&label=Forks)](https://github.com/kuiyu/RsCode.Payment)[![Vistors](https://visitor-badge.laobi.icu/badge?page_id=fudiwei.DotNetCore.SKIT.FlurlHttpClient.ByteDance&title=Visitors)](https://github.com/kuiyu/RsCode.Payment)[![License](https://img.shields.io/github/license/kuiyu/RsCode.Payment?label=License)](https://mit-license.org/)
 
 ## 快速入门
 
