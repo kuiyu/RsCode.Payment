@@ -16,12 +16,12 @@ namespace RsCode.Payment.Tenpay.ECommerce
     /// </summary>
     public class BalanceManager
     {
-        TenpayClientV3 tenpayClient;
-         public BalanceManager(TenpayClientV3 _tenpayClient)
+        ITenpayClient tenpayClient;
+         public BalanceManager(ITenpayClient _tenpayClient)
         {
             tenpayClient = _tenpayClient;
         }
-        /// <summary>
+        ///// <summary>
         ///// 查询二级商户账户实时余额
         ///// </summary>
         ///// <param name="request"></param>

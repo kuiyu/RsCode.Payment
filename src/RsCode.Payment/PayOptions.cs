@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
-using RsCode.Payment.Util;
-using System;
+﻿/*
+ * 项目:第三方支付工具 RsCode.Payment 
+ * 作者:河南软商网络科技有限公司 
+ * 协议:MIT License 2.0  
+ * 项目己托管于  
+ * github https://github.com/kuiyu/RsCode.Payment.git
+ */
+using Newtonsoft.Json;
 using System.ComponentModel;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
 
 namespace RsCode.Payment
@@ -45,7 +48,7 @@ namespace RsCode.Payment
         [JsonPropertyName("Rate")]
         public decimal Rate { get; set; } = 0.6m;
         /// <summary>
-        /// API密钥
+        /// 微信支付APIKey
         /// </summary>
         [JsonProperty("APIKey")]
         [JsonPropertyName("APIKey")]
@@ -58,21 +61,22 @@ namespace RsCode.Payment
         public string APIKeyV3 { get; set; } = "";
 
 
-        string privateKeyPath = "";
+        string privateKey = "";
         /// <summary>
-        /// 私钥证书路径
+        /// 私钥证书
+        /// cert开头时为证书路径 否则是私书内容
         /// </summary>
-        [JsonProperty("PrivateKeyCertPath")]
-        [JsonPropertyName("PrivateKeyCertPath")]
-        public string PrivateKeyCertPath { 
+        [JsonProperty("PrivateKey")]
+        [JsonPropertyName("PrivateKey")]
+        public string PrivateKey { 
             get {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (privateKey.StartsWith("cert")&& RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    privateKeyPath = privateKeyPath.Replace("/", "\\");
+                    privateKey = privateKey.Replace("/", "\\");
                 }
-                return privateKeyPath;
+                return privateKey;
             } set {
-                privateKeyPath = value;
+                privateKey = value;
             } }
         /// <summary>
         /// 商户私钥证书密码
@@ -81,52 +85,39 @@ namespace RsCode.Payment
         [JsonPropertyName("CertPassword")]
         public string CertPassword { get; set; } = "";
 
-        string publicKeyPath = "";
-        
+        string publicKey = "";
         /// <summary>
         /// 公钥证书路径
         /// </summary>
-        [JsonProperty("PublicKeyCertPath")]
-        [JsonPropertyName("PublicKeyCertPath")]
-        public string PublicKeyCertPath { 
+        [JsonProperty("PublicKey")]
+        [JsonPropertyName("PublicKey")]
+        public string PublicKey { 
             get {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (publicKey.StartsWith("cert")&& RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    privateKeyPath = privateKeyPath.Replace("/", "\\");
+                    publicKey = publicKey.Replace("/", "\\");
                 }
-                    return publicKeyPath;
+                    return publicKey;
             } set {
-                publicKeyPath = value;
+                publicKey = value;
             } }
- 
 
-        /// <summary>
-        /// 平台公钥证书文件
-        /// </summary>
-        [JsonProperty("PlatformPublicKeyCertPath")]
-        [JsonPropertyName("PlatformPublicKeyCertPath")]
-        public string PlatformPublicKeyCertPath { get; set; }
 
         /// <summary>
         /// 平台根证书路径
         /// </summary>
-        [JsonProperty("PlatformRootCertPath")]
-        [JsonPropertyName("PlatformRootCertPath")]
-        public string PlatformRootCertPath { get; set; }
+        [JsonProperty("PlatformRootCert")]
+        [JsonPropertyName("PlatformRootCert")]
+        public string PlatformRootCert { get; set; }
 
         /// <summary>
-        /// 支付宝公钥
+        /// 平台公钥
         /// </summary>
         [JsonProperty("PlatformPublicKey")]
         [JsonPropertyName("PlatformPublicKey")]
         public string PlatformPublicKey { get; set; }
 
-        /// <summary>
-        /// 应用的公钥
-        /// </summary>
-        [JsonProperty("PublicKey")]
-        [JsonPropertyName("PublicKey")]
-        public string PublicKey { get; set; }
+        
         /// <summary>
         /// 支付结果通知回调url，用于商户接收支付结果
         /// </summary>
@@ -148,55 +139,6 @@ namespace RsCode.Payment
             }
         }
 
-        public X509Certificate2 GetPublicKeyCert()
-        {
-            X509Certificate2 certificate = null;
-            if (string.IsNullOrWhiteSpace(PublicKeyCertPath))
-            {
-                throw new Exception("未配置公钥");
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                //windows使用p12证书
-                var root = AppContext.BaseDirectory;
-                var certPath = Path.Combine(Environment.CurrentDirectory, PublicKeyCertPath);
-                byte[] publicKey = File.ReadAllBytes(certPath); //从平台接口下载到的公钥
-                certificate = new X509Certificate2(certPath);
-            }
-            else
-            { 
-                var certPath = Path.Combine(Environment.CurrentDirectory, PublicKeyCertPath);
-                byte[] publicKey = File.ReadAllBytes(certPath); //从平台接口下载到的公钥
-                certificate = new X509Certificate2(certPath);
-            }
-
-
-            return certificate;
-        }
-        public X509Certificate2 GetPrivateKeyCert()
-        {
-            if (string.IsNullOrWhiteSpace(PrivateKeyCertPath))
-            {
-                throw new Exception("未配置证书");
-            }
-            var cert=Path.Combine(Environment.CurrentDirectory, PrivateKeyCertPath); 
-
-            X509Certificate2 certificate = File.Exists(cert) ? new X509Certificate2(cert, CertPassword)
-                : RSAUtilities.IsBase64String(cert) ? new X509Certificate2(Convert.FromBase64String(cert), CertPassword)
-                :throw new Exception("证书配置有误"); 
-
-            return certificate;
-        }
-
-        /// <summary>
-        /// 获取私有证书序列号
-        /// </summary>
-        /// <returns></returns>
-        public string GetCertSerialNo()
-        {
-            var cert = GetPrivateKeyCert();
-            return cert.GetSerialNumberString();
-        }
+        
     }
 }

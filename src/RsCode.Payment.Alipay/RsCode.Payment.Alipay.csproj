@@ -1,15 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	  <Version>1.0.4</Version>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Copyright></Copyright>
     <Company>河南软商网络科技有限公司</Company>
     <Authors>河南软商网络科技有限公司</Authors>
     <Description>软商网络支付宝工具包</Description>
+    <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
+    <PackageIcon>logo128-128.png</PackageIcon>
+	  
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AlipaySDKNet.Standard" Version="4.8.70" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RsCode.Payment\RsCode.Payment.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="logo128-128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

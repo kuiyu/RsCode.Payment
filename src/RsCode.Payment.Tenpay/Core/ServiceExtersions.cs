@@ -50,7 +50,7 @@ namespace RsCode.Payment
             }
            
             
-             
+            
 
             services.TryAddScoped<IPayConfig, PayConfig>();
            
@@ -61,7 +61,9 @@ namespace RsCode.Payment
             services.TryAddScoped<ECombineManager>();
             services.TryAddScoped<ERefundManager>();
             services.TryAddScoped<SubsidiesManager>();
+
             //services.TryAddScoped<IMerchantManager, MerchantManager>();
+
             services.TryAddScoped<ProfitsharingManager>();
             services.TryAddScoped<WithdrawManager>();
             #endregion

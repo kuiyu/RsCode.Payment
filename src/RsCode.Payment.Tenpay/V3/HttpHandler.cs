@@ -5,15 +5,12 @@
  * 项目己托管于  
  * github https://github.com/kuiyu/RsCode.Payment.git
  */
-using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,11 +29,11 @@ namespace RsCode.Payment.Tenpay.V3
             handler.SslProtocols = SslProtocols.Tls12;
             try
             {
-                string certPath = Path.Combine(Environment.CurrentDirectory, payOptions.PrivateKeyCertPath);
+                string certPath = Path.Combine(Environment.CurrentDirectory, payOptions.PrivateKey);
                 
                 handler.ClientCertificates.Add(new X509Certificate2(certPath, payOptions.MchId,
                     X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.MachineKeySet));
-
+                
             }
             catch (Exception e)
             {
@@ -60,9 +57,10 @@ namespace RsCode.Payment.Tenpay.V3
              request.Headers.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Unknown"))); 
             
             request.Headers.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8")); 
+            var certNo=TenpayTool.GetCertSerialNo(payOptions.PrivateKey, payOptions.MchId);
             if(!request.Headers.Contains("Wechatpay-Serial"))
             {
-                request.Headers.Add("Wechatpay-Serial",payOptions.GetCertSerialNo());
+                request.Headers.Add("Wechatpay-Serial",certNo);
             }  
             return await base.SendAsync(request, cancellationToken);
         }
@@ -82,7 +80,9 @@ namespace RsCode.Payment.Tenpay.V3
             string nonce = Guid.NewGuid().ToString("n");
             string message = $"{method}\n{uri}\n{timestamp}\n{nonce}\n{body}\n";
             string signature =TenpayTool.Sign(message,payOptions);
-            var certSerialNo = payOptions.GetPrivateKeyCert().GetSerialNumberString();
+
+            // var certSerialNo = payOptions.GetPrivateKeyCert().GetSerialNumberString();
+            var certSerialNo = TenpayTool.GetCertSerialNo(payOptions.PrivateKey, payOptions.MchId);
             return $"mchid=\"{payOptions.MchId}\",nonce_str=\"{nonce}\",timestamp=\"{timestamp}\",serial_no=\"{certSerialNo}\",signature=\"{signature}\"";
         }
 

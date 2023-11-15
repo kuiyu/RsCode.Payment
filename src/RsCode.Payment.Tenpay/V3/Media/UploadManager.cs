@@ -1,4 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿/*
+ * 项目:第三方支付工具 RsCode.Payment 
+ * 作者:河南软商网络科技有限公司 
+ * 协议:MIT License 2.0  
+ * 项目己托管于  
+ * github https://github.com/kuiyu/RsCode.Payment.git
+ */
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -71,7 +78,8 @@ namespace RsCode.Payment.Tenpay.Media
         {
             try
             {
-                var serialNo = currentPayOptions.GetCertSerialNo();
+                //var serialNo = currentPayOptions.GetCertSerialNo();
+
                 string boundary = string.Format("--{0}", DateTime.Now.Ticks.ToString("x"));
                 var sha256 = TenpayTool.SHA256File(filePath);
                 MetaInfo meta = new MetaInfo()

@@ -5,16 +5,13 @@
  * 项目己托管于  
  * github https://github.com/kuiyu/RsCode.Payment.git
  */
-using RsCode.Payment.Tenpay.ECommerce.ESubsidies;
-using RsCode.Payment.Tenpay.V3;
-using System.Threading.Tasks;
 
 namespace RsCode.Payment.Tenpay.ECommerce
 {
     public class SubsidiesManager
     {
-        TenpayClientV3 tenpayClient;
-        public SubsidiesManager(TenpayClientV3 _tenpayClient)
+        ITenpayClient tenpayClient;
+        public SubsidiesManager(ITenpayClient _tenpayClient)
         {
             tenpayClient = _tenpayClient;
         }

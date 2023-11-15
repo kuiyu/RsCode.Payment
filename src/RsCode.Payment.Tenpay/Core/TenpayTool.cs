@@ -6,6 +6,7 @@
  * github
    https://github.com/kuiyu/RsCode.Payment.git
  */
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.AspNetCore.Http;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
@@ -15,6 +16,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -217,13 +219,55 @@ namespace RsCode.Payment.Tenpay
         /// <returns></returns>
         public static string Sign(string data,PayOptions payOptions)
         {
-            X509Certificate2 x509Certificate2 = payOptions.GetPrivateKeyCert();
-
+            //X509Certificate2 x509Certificate2 = payOptions.GetPrivateKeyCert();
+            X509Certificate2 x509Certificate2 = TenpayTool.GetPrivateKeyCert(payOptions.PrivateKey,payOptions.MchId);
             var rsa = x509Certificate2.GetRSAPrivateKey();
             byte[] s = System.Text.Encoding.UTF8.GetBytes(data);
             return Convert.ToBase64String(rsa.SignData(s, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
         }
+        /// <summary>
+        /// 获取微信私钥证书
+        /// </summary>
+        /// <param name="privateKey">私钥证书路径</param>
+        /// <param name="certPassword">密码，默认微信商户号</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static X509Certificate2 GetPrivateKeyCert(string privateKey,string certPassword)
+        {
+            if (!privateKey.StartsWith("cert"))
+            {
+                throw new Exception("请将证书文件存放在站点根目录的cert文件夹中");
+            }
 
+            var cert = Path.Combine(Environment.CurrentDirectory, privateKey);
+            X509Certificate2 certificate = File.Exists(cert) ? new X509Certificate2(cert, certPassword)
+                : RSAUtilities.IsBase64String(cert) ? new X509Certificate2(Convert.FromBase64String(cert),certPassword)
+                : throw new Exception("证书配置有误");
+
+            return certificate;
+        }
+
+        public static  string GetCertSerialNo(string privateKey, string certPassword)
+        {
+            var cert = GetPrivateKeyCert(privateKey,certPassword);
+            return cert.GetSerialNumberString();
+        }
+
+        public static X509Certificate2 GetPublicKeyCert(PayOptions payOptions)
+        {
+            if (!payOptions.PublicKey.StartsWith("cert"))
+            {
+                throw new Exception("请将证书文件存放在站点根目录的cert文件夹中");
+            }
+
+            var certPath = payOptions.PublicKey;
+            X509Certificate2 certificate = null;
+
+            var cert = Path.Combine(Environment.CurrentDirectory, certPath);
+            byte[] publicKey = File.ReadAllBytes(cert); //从平台接口下载到的公钥
+            certificate = new X509Certificate2(cert);
+            return certificate;
+        }
         public static int Price(decimal price)
         {
             return Convert.ToInt32(price * 100);

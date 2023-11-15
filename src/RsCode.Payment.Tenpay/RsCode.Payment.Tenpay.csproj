@@ -1,12 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	  <Version>1.0.4</Version>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>河南软商网络科技有限公司</Company>
     <Authors>河南软商网络科技有限公司</Authors>
     <Description>软商网络微信支付工具包</Description>
     <Copyright>河南软商网络科技有限公司</Copyright>
   <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  <Title>微信支付业务API</Title>
+  <PackageProjectUrl>https://rscode.cn</PackageProjectUrl>
+  <PackageIcon>logo128-128.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,12 +22,7 @@
     <None Remove="Applyment4Sub\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\uml\rscode64_64.png" Link="rscode64_64.png">
-      <PackagePath></PackagePath>
-      <Pack>True</Pack>
-    </None>
-  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
@@ -31,6 +30,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RsCode.Payment\RsCode.Payment.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="logo128-128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

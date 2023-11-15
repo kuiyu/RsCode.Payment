@@ -49,41 +49,36 @@ public class Service
 **pay.json配置**
 
 ```json
-{
-  "Default": {
-    "TenpayMchId": "1604955852", //默认使用的微信商户号
-    "AppId": "wx7c829604a62b02e8" //默认使用的appid
-  },
-  "Payment": [
-     {
-      "PaymentChannel": 1,
-      "PaymentStatus": true,
-      "MchType": 0,
-      "MchId": "16042",
-      "Rate": 1.0,  //支付费率
-      "APIKey": "geyu223j22wqva",
-      "APIKeyV3": "ghue28437ncjp2ucndjf7",
-	  "PublicKeyCertPath": "cert/160492/apiclient_cert.p12",
-       "PrivateKeyCertPath": "cert/162/apiclient_cert.p12",
-      "CertPassword": "1604",
-      "NotifyUrl": "/tenpay/notify"
-    },
-    {
-      "PaymentChannel": 1,
-      "PaymentStatus": true,
-      "MchType": 0,
-      "MchId": "1425162102",
-      "Rate": 1.0,
-      "APIKey": "xduiesuwxst3",
-      "APIKeyV3": "hnrswlmp389e2",
-	  "PublicKeyCertPath": "cert/142512/apiclient_cert.p12",
-       "PrivateKeyCertPath": "cert/1425102/apiclient_cert.p12",
-      "CertPassword": "142512",
-      "pay_platform_cert_path": "/",
-      "pay_platform_cert": "",
-      "NotifyUrl": "/tenpay/notify/v2"
-    }
-  ],
+ "Default": {
+   "TenpayMchId": "1425162102", //默认微信支付商户号
+   "AppId": "wx7c829604a62b02e8"//默认应用Id
+ },
+ "Payment": [
+   {
+     "PaymentStatus": true,
+     "PaymentChannel": 1,   //支付渠道类型 1微信支付 2支付宝
+     "Rate": 0.6,
+     "MchId": "1425162102",  //商户号
+     "APIKey": "",   //微信支付APIkey
+     "APIKeyV3": "", //微信支付APIkey v3
+     "CertPassword": "1425162102",           //证书密码,默认为商户号
+     "PrivateKey": "cert\\1425162102\\apiclient_cert.p12", //私钥p12证书路径
+     "NotifyUrl": "https://xxx/tenpay/notify",               //支付回调地址
+     "MchType": 0
+   },
+   {
+     "PaymentStatus": true,
+     "PaymentChannel": 2, //支付渠道类型 1微信支付 2支付宝
+     "Rate": 0.6,
+     "MchId": "20210021xxxxxxx",
+     "PublicKey": "cert\\alipay\\appCertPublicKey_xxxxxxx.crt",  //应用的公钥
+     "PrivateKey":"MIIEpAxxxxxxxxxxxxxxxxxx", //应用私钥,使用支付宝密钥工具将生成的私钥转成PKCS1格式后使用
+     "PlatformPublicKey": "cert\\alipay\\alipayCertPublicKey_RSA2.crt",
+     "PlatformRootCert": "cert\\alipay\\alipayRootCert.crt",
+     "NotifyUrl": "/alipay/notify",
+     "MchType": "0"
+   } 
+ ],
   "App": [
     {
       "AppId": "wx4d99cd",

@@ -6,9 +6,7 @@
  * github https://github.com/kuiyu/RsCode.Payment.git
  */
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
@@ -34,7 +32,7 @@ namespace RsCode.Payment.Tenpay.V2
             {
                 try
                 { 
-                    string certPath = Path.Combine(Environment.CurrentDirectory, payOptions.PublicKeyCertPath);
+                    string certPath = Path.Combine(Environment.CurrentDirectory, payOptions.PrivateKey);
 
                     handler.ClientCertificates.Add(new X509Certificate2(certPath, payOptions.MchId)); 
                 }

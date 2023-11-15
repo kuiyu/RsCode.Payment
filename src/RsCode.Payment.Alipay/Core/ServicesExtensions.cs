@@ -12,13 +12,12 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Http;
-using RsCode.Payment;
 using RsCode.Payment.Alipay;
 using Microsoft.Extensions.Options;
 
 namespace RsCode.Payment
 {
-    public  static class ServicesExtensions
+	public  static class ServicesExtensions
     {
         public static void AddAlipay(this IServiceCollection services)
         {

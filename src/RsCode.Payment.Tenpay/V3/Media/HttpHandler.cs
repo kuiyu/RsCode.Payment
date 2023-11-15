@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+ * 项目:第三方支付工具 RsCode.Payment 
+ * 作者:河南软商网络科技有限公司 
+ * 协议:MIT License 2.0  
+ * 项目己托管于  
+ * github https://github.com/kuiyu/RsCode.Payment.git
+ */
+
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,7 +31,7 @@ namespace RsCode.Payment.Tenpay.Media
             handler.SslProtocols = SslProtocols.Tls12;
             try
             {
-                string certPath = Path.Combine(Environment.CurrentDirectory, payOptions.PublicKeyCertPath);
+                string certPath = Path.Combine(Environment.CurrentDirectory, payOptions.PrivateKey);
                 handler.ClientCertificates.Add(new X509Certificate2(certPath,payOptions.MchId,
                     X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.MachineKeySet));
               
@@ -70,8 +78,9 @@ namespace RsCode.Payment.Tenpay.Media
             var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             string nonce = Guid.NewGuid().ToString("n");
             string message = $"{method}\n{uri}\n{timestamp}\n{nonce}\n{body}\n";
-            string signature = TenpayTool.Sign(message, payOptions); 
-            var certSerialNo = payOptions.GetPrivateKeyCert().GetSerialNumberString();
+            string signature = TenpayTool.Sign(message, payOptions);
+            //var certSerialNo =payOptions.GetPrivateKeyCert().GetSerialNumberString();
+            var certSerialNo = TenpayTool.GetCertSerialNo( payOptions.PrivateKey,payOptions.MchId);
             return $"mchid=\"{payOptions.MchId}\",nonce_str=\"{nonce}\",timestamp=\"{timestamp}\",serial_no=\"{certSerialNo}\",signature=\"{signature}\"";
         }
 
