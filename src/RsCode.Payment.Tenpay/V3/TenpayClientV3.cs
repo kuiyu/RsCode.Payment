@@ -77,7 +77,12 @@ namespace RsCode.Payment.Tenpay.V3
             
             if(method=="POST")
             {
-                string s = JsonSerializer.Serialize(t,t.GetType());
+                JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+                {
+                    IgnoreNullValues = true                    
+                }; 
+
+                string s = JsonSerializer.Serialize(t,t.GetType(), jsonSerializerOptions);
                 HttpContent httpContent =  new StringContent(s, Encoding.UTF8, "application/json");
                 
                 if(!string.IsNullOrWhiteSpace(certSerialNo))
@@ -103,7 +108,7 @@ namespace RsCode.Payment.Tenpay.V3
                 //https://wechatpay-api.gitbook.io/wechatpay-api-v3/qian-ming-zhi-nan-1/qian-ming-yan-zheng
                 //1.获取平台证书
                 var publicKey = await GetPublicKeyAsync();
-
+               
                 //2.构造验签名串 
                 StringValues timestamp = "";
                 StringValues nonce = "";
@@ -117,13 +122,14 @@ namespace RsCode.Payment.Tenpay.V3
                 StringValues wxpaySign = "";
                 request.Headers.TryGetValue("Wechatpay-Signature", out wxpaySign);
 
-                //4.验证签名
+                log.LogDebug($"signSourceString={signSourceString}");
+                log.LogDebug($"{body}");
+                //4.验证签名 
                 var checkSign = TenpayTool.VerifySign(publicKey, wxpaySign.ToString(), signSourceString);
                 if (checkSign)
                 {
-                    var notifyData = JsonSerializer.Deserialize<NotifyDataV3>(body);
-
-                    return notifyData;
+                    var data = JsonSerializer.Deserialize<NotifyDataV3>(body);
+                    return data;
                 }
                 else
                 {
@@ -144,15 +150,15 @@ namespace RsCode.Payment.Tenpay.V3
         public async Task<byte[]> GetPublicKeyAsync()
         {
             string cacheKey = "TenpayCertPublicKey";
-            byte[] publicKey = null;
-            cache.TryGetValue<byte[]>(cacheKey,out publicKey);
-            if(publicKey==null)
+            
+            if(!cache.TryGetValue<byte[]>(cacheKey,out byte[] publicKey)) 
             {
                 //微信平台证书
                 var wxCerts = await SendAsync<CertificatiesDownloadResponse>(new CertificatiesDownloadRequest());
                 var wxCert = wxCerts.Data.FirstOrDefault().CertificateInfo;
 
                 var text = wxCert.Decrypt(payOptions.APIKeyV3);
+               
                 publicKey = Encoding.UTF8.GetBytes(text);
                 cache.Set<byte[]>(cacheKey, publicKey, DateTimeOffset.Now.AddHours(11));
             } 

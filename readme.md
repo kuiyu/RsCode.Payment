@@ -2,7 +2,7 @@
 
 RsCode.Payment软商网络开发的第三方支付平台SDK，使用.net技术开发，帮助应用快速接入支付系统
 
-支持多个商户号同时支付
+支持多个不同商户号切换支付
 
 [![Gitee Stars](https://gitee.com/kuiyu/RsCode.Payment/badge/star.svg?title=Stars)](https://gitee.com/kuiyu/RsCode.Payment)[![Gitee Forks](https://gitee.com/kuiyu/RsCode.Payment/badge/fork.svg?title=Forks)](https://gitee.com/kuiyu/RsCode.Payment)[![GitHub Stars](https://img.shields.io/github/stars/kuiyu/RsCode.Payment?logo=github&label=Stars)](https://github.com/kuiyu/RsCode.Payment)[![GitHub Forks](https://img.shields.io/github/forks/kuiyu/RsCode.Payment?logo=github&label=Forks)](https://github.com/kuiyu/RsCode.Payment)[![Vistors](https://visitor-badge.laobi.icu/badge?page_id=fudiwei.DotNetCore.SKIT.FlurlHttpClient.ByteDance&title=Visitors)](https://github.com/kuiyu/RsCode.Payment)[![License](https://img.shields.io/github/license/kuiyu/RsCode.Payment?label=License)](https://mit-license.org/)
 
@@ -63,7 +63,7 @@ public class Service
      "APIKeyV3": "", //微信支付APIkey v3
      "CertPassword": "1425162102",           //证书密码,默认为商户号
      "PrivateKey": "cert\\1425162102\\apiclient_cert.p12", //私钥p12证书路径
-     "NotifyUrl": "https://xxx/tenpay/notify",               //支付回调地址
+     "NotifyUrl": "https://xxx/tenpay/notify/",               //支付回调地址，必须以/结尾
      "MchType": 0
    },
    {

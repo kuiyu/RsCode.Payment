@@ -17,6 +17,7 @@ namespace RsCode.Payment.Tenpay.V3.Merchant.Info
         public RefundGoodsInfo(string merchantGoodsId, decimal unitPrice, decimal refundAmount,string goodsName, int quantity)
         {
             MerchantGoodsId = merchantGoodsId;
+            WechatPayGoodsId = merchantGoodsId;
             UnitPrice =TenpayTool.Price( unitPrice);
             RefundAmount =TenpayTool.Price( refundAmount);
             Quantity = quantity;

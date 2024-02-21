@@ -23,15 +23,14 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
         public RefundRequest(string transactionId, 
             string orderNo, string refundOrderNo, 
             string reason, string notifyUrl, 
-            string fundsAccount, RefundAmountRequestInfo amount, 
+             RefundAmountRequestInfo amount, 
             RefundGoodsInfo[] goodsDetail)
         {
             TransactionId = transactionId;
             OrderNo = orderNo;
             RefundOrderNo = refundOrderNo;
             Reason = reason;
-            NotifyUrl = notifyUrl;
-            FundsAccount = fundsAccount;
+            NotifyUrl = notifyUrl;          
             Amount = amount;
             GoodsDetail = goodsDetail;
         }

@@ -16,6 +16,11 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
     /// </summary>
     public class RefundAmountRequestInfo
     {
+        public RefundAmountRequestInfo()
+        {
+            
+        }
+
         /// <summary>
         /// 退款单金额信息
         /// </summary>
@@ -23,11 +28,10 @@ namespace RsCode.Payment.Tenpay.V3.Merchant
         /// <param name="totalAmount">订单总额</param>
         /// <param name="fromInfo">退款出资账户及金额</param>
         /// <param name="currency">退款币种</param>
-        public RefundAmountRequestInfo(decimal refundAmount,decimal totalAmount, RefundFromInfo[] fromInfo=null, string currency="CNY")
+        public RefundAmountRequestInfo(decimal refundAmount,decimal totalAmount,  string currency="CNY")
         {
             Refund = TenpayTool.Price(refundAmount);
             Total = TenpayTool.Price(totalAmount);
-            From = fromInfo;
             Currency = currency;
         }
         /// <summary>

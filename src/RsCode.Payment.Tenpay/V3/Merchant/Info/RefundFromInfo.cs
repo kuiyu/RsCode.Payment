@@ -19,7 +19,7 @@ namespace RsCode.Payment.Tenpay.V3.Merchant.Info
         /// 枚举值： AVAILABLE : 可用余额   UNAVAILABLE : 不可用余额
         /// </summary>
         [JsonPropertyName("account")]
-        public string Account { get; set; }
+        public string Account { get; set; } 
         /// <summary>
         /// 出资金额
         /// </summary>
